@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+/* Accessibility Mode Utilities */
+.dyslexia-font {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
+  letter-spacing: 0.05em;
+  word-spacing: 0.1em;
+  line-height: 1.8;
+}
+
+.high-contrast-mode {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+}
+
+.high-contrast-mode button {
+  border: 2px solid #ffff00 !important;
+  color: #ffff00 !important;
+  background: #000000 !important;
+}
+
+.high-contrast-mode a {
+  color: #00ffff !important;
+  text-decoration: underline !important;
+}
+
+.font-size-small { font-size: 0.875rem; }
+.font-size-medium { font-size: 1rem; }
+.font-size-large { font-size: 1.125rem; }
+.font-size-xlarge { font-size: 1.25rem; }
+
+/* Custom Glassmorphism Cards */
+.glass-panel {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
