@@ -19,8 +19,8 @@ def translate_text(text: str, target_language: str) -> str:
     if not text or target_language.lower() == "english":
         return text
 
-    # Option 1: Try Gemini API if key is configured
-    if settings.GEMINI_API_KEY:
+    # Option 1: Try Gemini API if valid key is configured
+    if settings.GEMINI_API_KEY and len(settings.GEMINI_API_KEY) > 20 and not settings.GEMINI_API_KEY.startswith("yAQ"):
         try:
             genai.configure(api_key=settings.GEMINI_API_KEY)
             model = genai.GenerativeModel('gemini-1.5-flash')

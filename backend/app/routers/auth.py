@@ -66,14 +66,15 @@ def google_login(req: GoogleAuthRequest, db: Session = Depends(get_db)):
     """Authenticates user via Google OAuth ID Token."""
     google_info = verify_google_token(req.id_token)
     if not google_info or not google_info.get("email"):
-        # Fallback for client testing if mock token is passed
-        email = "google_user@example.com"
-        google_id = "google_123456"
-        full_name = "Google User"
-    else:
-        email = google_info["email"]
-        google_id = google_info["google_id"]
-        full_name = google_info.get("full_name", email.split("@")[0])
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Google Authentication failed. Could not verify your Google account."
+        )
+
+    email = google_info["email"]
+    google_id = google_info["google_id"]
+    full_name = google_info.get("full_name") or email.split("@")[0].capitalize()
+
 
     user = db.query(User).filter((User.google_id == google_id) | (User.email == email)).first()
     if not user:
@@ -103,6 +104,39 @@ def google_login(req: GoogleAuthRequest, db: Session = Depends(get_db)):
             "avatar_url": user.avatar_url
         }
     }
+
+@router.post("/demo-login", response_model=Token)
+def demo_login(db: Session = Depends(get_db)):
+    demo_email = "student@university.edu"
+    user = db.query(User).filter(User.email == demo_email).first()
+    if not user:
+        user = User(
+            email=demo_email,
+            password_hash=get_password_hash("student123"),
+            full_name="Pritika Krish",
+            role="student"
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+        prefs = Preferences(user_id=user.id)
+        db.add(prefs)
+        db.commit()
+
+    access_token = create_access_token(data={"sub": str(user.id)})
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "full_name": user.full_name,
+            "role": user.role,
+            "avatar_url": user.avatar_url
+        }
+    }
+
 
 @router.get("/profile", response_model=UserProfile)
 def get_profile(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):

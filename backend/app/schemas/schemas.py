@@ -74,6 +74,7 @@ class TextUploadRequest(BaseModel):
 class UrlUploadRequest(BaseModel):
     url: str
     title: Optional[str] = None
+    subject: Optional[str] = "General"
 
 # --- Translation Schemas ---
 class TranslateRequest(BaseModel):
@@ -110,6 +111,7 @@ class QuizGenerateRequest(BaseModel):
     document_id: int
     difficulty: Optional[str] = "Medium"  # Easy, Medium, Hard
     question_count: Optional[int] = 5
+    target_language: Optional[str] = "English"
 
 class QuizResponse(BaseModel):
     id: int

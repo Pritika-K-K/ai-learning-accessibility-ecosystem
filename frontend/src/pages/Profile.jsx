@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useAccessibility } from '../context/AccessibilityContext';
-import { User, Settings, CheckCircle2, Shield, Languages, Volume2 } from 'lucide-react';
+import { User, Settings, CheckCircle2, Shield, Languages, Volume2, LogOut } from 'lucide-react';
 
 const Profile = () => {
-  const { user, updatePreferences } = useAuth();
+  const { user, updatePreferences, logout } = useAuth();
   const { fontSize, setFontSize, dyslexicFont, setDyslexicFont, highContrast, setHighContrast } = useAccessibility();
+  const navigate = useNavigate();
 
   const [preferredLang, setPreferredLang] = useState(user?.preferred_language || 'English');
   const [saved, setSaved] = useState(false);
@@ -26,6 +28,11 @@ const Profile = () => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
       
@@ -38,17 +45,31 @@ const Profile = () => {
       <div className="glass-panel rounded-3xl p-8 border border-slate-800 space-y-6">
         
         {/* Profile Card */}
-        <div className="flex items-center space-x-4 border-b border-slate-800 pb-6">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white text-xl font-bold">
-            {user?.full_name ? user.full_name.charAt(0) : 'S'}
+        <div className="flex items-center justify-between border-b border-slate-800 pb-6">
+          <div className="flex items-center space-x-4">
+            {user?.avatar_url ? (
+              <img src={user.avatar_url} alt="Profile" className="w-14 h-14 rounded-2xl object-cover border border-indigo-500/30" />
+            ) : (
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white text-xl font-bold">
+                {user?.full_name ? user.full_name.charAt(0) : 'S'}
+              </div>
+            )}
+            <div>
+              <h2 className="text-lg font-bold text-white">{user?.full_name || 'Student User'}</h2>
+              <p className="text-xs text-slate-400">{user?.email}</p>
+              <span className="inline-block mt-1 px-2.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase">
+                {user?.role || 'Student'}
+              </span>
+            </div>
           </div>
-          <div>
-            <h2 className="text-lg font-bold text-white">{user?.full_name || 'Student User'}</h2>
-            <p className="text-xs text-slate-400">{user?.email}</p>
-            <span className="inline-block mt-1 px-2.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase">
-              {user?.role || 'Student'}
-            </span>
-          </div>
+
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-bold transition-all flex items-center space-x-2"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Sign Out</span>
+          </button>
         </div>
 
         {/* Preferences Form */}

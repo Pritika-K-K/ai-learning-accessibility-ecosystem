@@ -8,6 +8,7 @@ from app.models.models import User, Document
 from app.schemas.schemas import DocumentResponse, TextUploadRequest, UrlUploadRequest
 from app.services.auth_service import get_current_user
 from app.services.pdf_service import extract_text_from_file
+from app.services.url_service import extract_content_from_url
 
 router = APIRouter(prefix="", tags=["Upload Center"])
 
@@ -67,6 +68,40 @@ def upload_raw_text(
         status="Ready",
         subject=req.subject or "General",
         accessibility_score=90
+    )
+    db.add(doc)
+    db.commit()
+    db.refresh(doc)
+    return doc
+
+@router.post("/upload/url", response_model=DocumentResponse)
+def upload_url_content(
+    req: UrlUploadRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if not req.url or not req.url.strip():
+        raise HTTPException(status_code=400, detail="A valid URL is required.")
+
+    extracted_data = extract_content_from_url(req.url)
+    doc_title = req.title.strip() if (req.title and req.title.strip()) else extracted_data["title"]
+    extracted_text = extracted_data["text"]
+    source_type = extracted_data.get("source_type", "url")
+
+    summary = f"Summary of {doc_title}:\n" + (extracted_text[:300] + "..." if len(extracted_text) > 300 else extracted_text)
+    simplified = f"Key points from {doc_title}:\n• {extracted_text[:250]}"
+
+    doc = Document(
+        user_id=current_user.id,
+        title=doc_title,
+        file_type=source_type,
+        file_size=len(extracted_text.encode('utf-8')),
+        original_text=extracted_text,
+        summary_text=summary,
+        simplified_text=simplified,
+        status="Ready",
+        subject=req.subject or "General",
+        accessibility_score=92
     )
     db.add(doc)
     db.commit()

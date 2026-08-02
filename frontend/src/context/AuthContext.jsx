@@ -66,11 +66,21 @@ export const AuthProvider = ({ children }) => {
     setUser((prev) => ({ ...prev, ...newPrefs }));
   };
 
+  const demoLogin = async () => {
+    const response = await api.post('/auth/demo-login');
+    const { access_token, user: userData } = response.data;
+    localStorage.setItem('token', access_token);
+    setToken(access_token);
+    setUser(userData);
+    return userData;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, googleLogin, logout, updatePreferences }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, googleLogin, demoLogin, logout, updatePreferences }}>
       {children}
     </AuthContext.Provider>
   );
+
 };
 
 export const useAuth = () => useContext(AuthContext);

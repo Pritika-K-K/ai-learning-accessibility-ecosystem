@@ -15,14 +15,15 @@ def create_tts(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    result = generate_tts_audio(req.text, req.language or "en")
+    selected_lang = req.language or "English"
+    result = generate_tts_audio(req.text, selected_lang, slow=(req.speed and req.speed < 0.9))
     
     # Store audio record
     audio = AudioCaption(
         document_id=document_id,
         audio_path=result["audio_url"],
         caption_path=result["caption_url"],
-        language=req.language or "English",
+        language=result["language"],
         voice_gender=req.gender or "Female",
         speed=req.speed or 1.0
     )
@@ -32,7 +33,9 @@ def create_tts(
     return {
         "audio_url": result["audio_url"],
         "caption_url": result["caption_url"],
-        "language": req.language,
+        "language": result["language"],
+        "language_code": result["language_code"],
+        "translated_text": result["translated_text"],
         "speed": req.speed
     }
 

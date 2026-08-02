@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAccessibility } from '../context/AccessibilityContext';
-import { Volume2, Play, Pause, Download, Eye, Sparkles, CheckCircle2, ShieldAlert, Sliders } from 'lucide-react';
+import { Volume2, Play, Pause, Download, Eye, Sparkles, CheckCircle2, ShieldAlert, Sliders, Languages } from 'lucide-react';
+
+const NARRATION_LANGUAGES = [
+  'English', 'Hindi', 'Tamil', 'Telugu', 'Kannada', 'Malayalam', 'Marathi', 'Gujarati', 'Bengali'
+];
 
 const AccessibilityCenter = () => {
   const { fontSize, setFontSize, dyslexicFont, setDyslexicFont, highContrast, setHighContrast, readingGuide, setReadingGuide } = useAccessibility();
@@ -11,11 +15,11 @@ const AccessibilityCenter = () => {
   const [selectedDoc, setSelectedDoc] = useState(null);
 
   const [textToNarrate, setTextToNarrate] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [voiceGender, setVoiceGender] = useState('Female');
   const [speechSpeed, setSpeechSpeed] = useState(1.0);
   const [audioUrl, setAudioUrl] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [audioRef, setAudioRef] = useState(null);
+  const [activeLanguage, setActiveLanguage] = useState('English');
   const [loadingAudio, setLoadingAudio] = useState(false);
 
   const [scoreData, setScoreData] = useState(null);
@@ -63,13 +67,18 @@ const AccessibilityCenter = () => {
     try {
       const res = await api.post(`/tts?document_id=${selectedDocId || 1}`, {
         text: textToNarrate,
-        language: 'en',
+        language: selectedLanguage,
         gender: voiceGender,
         speed: speechSpeed
       });
       setAudioUrl(`http://localhost:8000${res.data.audio_url}`);
+      setActiveLanguage(res.data.language || selectedLanguage);
+      if (res.data.translated_text) {
+        setTextToNarrate(res.data.translated_text);
+      }
     } catch (err) {
-      alert('Audio narration generation failed.');
+      console.error(err);
+      alert('Audio narration generation failed. Please try again.');
     } finally {
       setLoadingAudio(false);
     }
@@ -83,7 +92,7 @@ const AccessibilityCenter = () => {
         <div>
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-xs font-semibold mb-2">
             <Volume2 className="w-3.5 h-3.5" />
-            <span>Module 6: Accessibility & Audio Narration Center</span>
+            <span>Module 6: Accessibility & Multi-Language Audio Narration</span>
           </div>
           <h1 className="text-3xl font-extrabold text-white">Accessibility Suite</h1>
         </div>
@@ -113,14 +122,30 @@ const AccessibilityCenter = () => {
             <span className="text-xs text-slate-400">Document: {selectedDoc?.title || 'Selected file'}</span>
           </div>
 
-          {/* Voice Controls Bar */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+          {/* Voice & Language Controls Bar */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+            <div>
+              <label className="block text-[11px] font-semibold text-slate-400 mb-1 flex items-center space-x-1">
+                <Languages className="w-3 h-3 text-pink-400" />
+                <span>Audio Language</span>
+              </label>
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-pink-500"
+              >
+                {NARRATION_LANGUAGES.map((lang) => (
+                  <option key={lang} value={lang}>{lang}</option>
+                ))}
+              </select>
+            </div>
+
             <div>
               <label className="block text-[11px] font-semibold text-slate-400 mb-1">Voice Gender</label>
               <select
                 value={voiceGender}
                 onChange={(e) => setVoiceGender(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white"
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-pink-500"
               >
                 <option value="Female">Female Voice (Natural)</option>
                 <option value="Male">Male Voice (Deep)</option>
@@ -132,7 +157,7 @@ const AccessibilityCenter = () => {
               <select
                 value={speechSpeed}
                 onChange={(e) => setSpeechSpeed(parseFloat(e.target.value))}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white"
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-pink-500"
               >
                 <option value={0.75}>0.75x (Slow / Accessible)</option>
                 <option value={1.0}>1.0x (Normal)</option>
@@ -145,9 +170,9 @@ const AccessibilityCenter = () => {
               <button
                 onClick={handleGenerateTTS}
                 disabled={loadingAudio}
-                className="w-full py-2 rounded-lg bg-pink-600 hover:bg-pink-500 text-white text-xs font-bold transition-colors shadow-md shadow-pink-500/20"
+                className="w-full py-2 rounded-lg bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-95 text-white text-xs font-bold transition-all shadow-md shadow-pink-500/20"
               >
-                {loadingAudio ? 'Generating MP3...' : 'Generate Narration'}
+                {loadingAudio ? 'Generating Audio...' : 'Generate Narration'}
               </button>
             </div>
           </div>
@@ -156,10 +181,13 @@ const AccessibilityCenter = () => {
           {audioUrl && (
             <div className="p-4 rounded-2xl bg-gradient-to-r from-pink-900/40 via-purple-900/40 to-slate-900 border border-pink-500/30 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-pink-300">Generated Narration MP3 Ready</span>
+                <span className="text-xs font-bold text-pink-300 flex items-center space-x-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+                  <span>Narration Audio Ready ({activeLanguage})</span>
+                </span>
                 <a
                   href={audioUrl}
-                  download="narration.mp3"
+                  download={`narration_${activeLanguage}.mp3`}
                   className="text-xs text-pink-400 hover:underline flex items-center space-x-1"
                 >
                   <Download className="w-3.5 h-3.5" />
@@ -172,7 +200,9 @@ const AccessibilityCenter = () => {
 
           {/* Text Content Preview */}
           <div className="space-y-2">
-            <label className="block text-xs font-semibold text-slate-300">Narration Script Text:</label>
+            <label className="block text-xs font-semibold text-slate-300">
+              Narration Script Text ({selectedLanguage}):
+            </label>
             <textarea
               rows={6}
               value={textToNarrate}

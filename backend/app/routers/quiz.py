@@ -20,7 +20,12 @@ def create_quiz(
         raise HTTPException(status_code=404, detail="Document not found")
 
     text = doc.original_text or doc.summary_text or "General educational content."
-    questions = generate_quiz_questions(text, difficulty=req.difficulty or "Medium", question_count=req.question_count or 5)
+    questions = generate_quiz_questions(
+        text, 
+        difficulty=req.difficulty or "Medium", 
+        question_count=req.question_count or 5,
+        target_language=req.target_language or "English"
+    )
 
     quiz = Quiz(
         document_id=doc.id,

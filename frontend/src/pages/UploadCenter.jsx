@@ -46,11 +46,11 @@ const UploadCenter = () => {
 
   const handleTextUpload = async (e) => {
     e.preventDefault();
-    const titleToUse = textTitle.trim() || (activeTab === 'url' ? 'Web Article' : activeTab === 'youtube' ? 'YouTube Transcript' : 'Study Notes');
-    const contentToUse = rawText.trim() || (url ? `Imported content from URL: ${url}\n\nKey educational concepts extracted from web source.` : '');
+    const titleToUse = textTitle.trim() || 'Study Notes';
+    const contentToUse = rawText.trim();
 
     if (!contentToUse) {
-      setErrorMsg('Please paste text or enter a valid URL.');
+      setErrorMsg('Please paste study text before saving.');
       return;
     }
 
@@ -71,6 +71,31 @@ const UploadCenter = () => {
       setLoading(false);
     }
   };
+
+  const handleUrlUpload = async (e) => {
+    e.preventDefault();
+    if (!url.trim()) {
+      setErrorMsg('Please enter a valid Web page or YouTube video URL.');
+      return;
+    }
+
+    setLoading(true);
+    setErrorMsg('');
+
+    try {
+      const res = await api.post('/upload/url', {
+        url: url.trim(),
+        subject: subject
+      });
+      setPreview(res.data);
+    } catch (err) {
+      console.error(err);
+      setErrorMsg(err.response?.data?.detail || 'Failed to extract text from URL/YouTube video. Please check the URL.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
@@ -206,7 +231,7 @@ const UploadCenter = () => {
 
         {/* Tab Content: URL & YouTube */}
         {(activeTab === 'url' || activeTab === 'youtube') && (
-          <form onSubmit={handleTextUpload} className="space-y-4">
+          <form onSubmit={handleUrlUpload} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">
                 {activeTab === 'url' ? 'Educational Web Page URL' : 'YouTube Video Link'}
