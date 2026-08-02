@@ -43,10 +43,11 @@ const Navbar = () => {
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <span className="font-bold text-lg text-white tracking-wide group-hover:text-indigo-400 transition-colors">
-                AI Learning
+              <span className="font-bold text-xl text-white tracking-wide group-hover:text-indigo-400 transition-colors">
+                Learnix
               </span>
-              <span className="text-xs text-indigo-400 block font-medium -mt-1">Accessibility Ecosystem</span>
+              <span className="text-[11px] text-indigo-400 block font-medium -mt-1">Accessibility Ecosystem</span>
+
             </div>
           </Link>
 

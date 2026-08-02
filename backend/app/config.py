@@ -2,7 +2,8 @@ import os
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "AI Learning Accessibility Ecosystem"
+    PROJECT_NAME: str = "Learnix"
+
     API_V1_STR: str = "/api"
     SECRET_KEY: str = "super-secret-key-change-in-production-123456789"
     ALGORITHM: str = "HS256"

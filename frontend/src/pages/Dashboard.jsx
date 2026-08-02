@@ -52,7 +52,8 @@ const Dashboard = () => {
           <div className="space-y-2">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>AI Learning Accessibility Ecosystem Active</span>
+              <span>Learnix Ecosystem Active</span>
+
             </div>
             <h1 className="text-3xl font-extrabold text-white tracking-tight">
               Welcome back, <span className="gradient-text">{stats?.user_name || 'Student'}</span> 👋

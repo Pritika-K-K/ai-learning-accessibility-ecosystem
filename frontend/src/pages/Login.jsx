@@ -54,7 +54,8 @@ const Login = () => {
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-white tracking-tight">Sign In to Your Account</h2>
-          <p className="text-xs text-slate-400 mt-1">Enter your registered email and password to access your AI Learning Hub</p>
+          <p className="text-xs text-slate-400 mt-1">Enter your registered email and password to access your Learnix Hub</p>
+
         </div>
 
         {error && (

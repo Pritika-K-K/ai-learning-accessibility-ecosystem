@@ -14,9 +14,10 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="AI-Powered Learning Accessibility Ecosystem Backend REST API",
+    description="Learnix - AI-Powered Learning Accessibility Ecosystem Backend REST API",
     version="1.0.0"
 )
+
 
 # Enable CORS for React SPA Frontend
 app.add_middleware(

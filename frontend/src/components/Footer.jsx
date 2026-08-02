@@ -14,7 +14,8 @@ const Footer = () => {
               <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-lg text-white">AI Learning Ecosystem</span>
+              <span className="font-bold text-xl text-white">Learnix</span>
+
             </div>
             <p className="text-xs leading-relaxed text-slate-400">
               An all-in-one accessibility-first learning platform that translates, simplifies, narrates, and quizzes students on their study materials.
@@ -80,7 +81,8 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-slate-800/80 flex flex-col md:flex-row items-center justify-between text-xs text-slate-400">
-          <p>© 2026 AI-Powered Learning Accessibility Ecosystem. All rights reserved.</p>
+          <p>© 2026 Learnix Accessibility Ecosystem. All rights reserved.</p>
+
           <div className="flex items-center space-x-1 mt-4 md:mt-0">
             <span>Built with</span>
             <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 inline" />
