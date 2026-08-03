@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAccessibility } from '../context/AccessibilityContext';
-import { Volume2, Play, Pause, Download, Eye, Sparkles, CheckCircle2, ShieldAlert, Sliders, Languages } from 'lucide-react';
+import { 
+  Volume2, Play, Pause, Download, Eye, Sparkles, CheckCircle2, 
+  ShieldAlert, Sliders, Languages, ScanText, Heading, Type, FileSearch, Video, AlertCircle
+} from 'lucide-react';
 
 const NARRATION_LANGUAGES = [
   'English', 'Hindi', 'Tamil', 'Telugu', 'Kannada', 'Malayalam', 'Marathi', 'Gujarati', 'Bengali'
@@ -84,6 +87,19 @@ const AccessibilityCenter = () => {
     }
   };
 
+  const renderCheckIcon = (index, fileType) => {
+    if (fileType === 'youtube') {
+      if (index === 0) return <Video className="w-3.5 h-3.5 text-rose-400 shrink-0" />;
+      if (index === 1) return <Languages className="w-3.5 h-3.5 text-indigo-400 shrink-0" />;
+      if (index === 2) return <Volume2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />;
+      return <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />;
+    }
+    if (index === 0) return <ScanText className="w-3.5 h-3.5 text-indigo-400 shrink-0" />;
+    if (index === 1) return <Heading className="w-3.5 h-3.5 text-pink-400 shrink-0" />;
+    if (index === 2) return <FileSearch className="w-3.5 h-3.5 text-cyan-400 shrink-0" />;
+    return <Type className="w-3.5 h-3.5 text-amber-400 shrink-0" />;
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
       
@@ -104,7 +120,7 @@ const AccessibilityCenter = () => {
           className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"
         >
           {documents.map((d) => (
-            <option key={d.id} value={d.id}>{d.title}</option>
+            <option key={d.id} value={d.id}>{d.title} ({d.file_type?.toUpperCase() || 'FILE'})</option>
           ))}
         </select>
       </div>
@@ -212,7 +228,7 @@ const AccessibilityCenter = () => {
           </div>
         </div>
 
-        {/* Right Col: Reading Modes & Accessibility Score */}
+        {/* Right Col: Reading Modes & Dynamic Accessibility Compliance Suite */}
         <div className="space-y-6">
           
           {/* Reading Modes Card */}
@@ -291,20 +307,106 @@ const AccessibilityCenter = () => {
             </div>
           </div>
 
-          {/* Accessibility Score Card */}
-          <div className="glass-panel rounded-3xl p-6 border border-emerald-500/30 space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Document Readability Score</h4>
-              <span className="text-2xl font-black text-emerald-400">{scoreData?.score || 88}%</span>
+          {/* Section: Accessibility Compliance Suite (Dynamic based on selected file format) */}
+          <div className="glass-panel rounded-3xl p-6 border border-emerald-500/30 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>Accessibility Compliance Suite</span>
+                </h4>
+                <p className="text-[11px] text-slate-400">
+                  Format-Specific Audit: <span className="text-indigo-400 font-bold uppercase">{scoreData?.file_type || selectedDoc?.file_type || 'FILE'}</span>
+                </p>
+              </div>
+              <span className="text-2xl font-black text-emerald-400">{scoreData?.score || 94}%</span>
             </div>
 
-            <div className="space-y-2 pt-2 border-t border-slate-800 text-xs">
-              {scoreData?.suggestions.map((s, i) => (
-                <div key={i} className="flex items-start space-x-2 text-slate-300">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>{s}</span>
-                </div>
-              ))}
+            {/* Dynamic Compliance Checks Tailored to Uploaded File Type */}
+            <div className="space-y-3 pt-1 text-xs">
+              {scoreData?.checks && scoreData.checks.length > 0 ? (
+                scoreData.checks.map((chk, index) => (
+                  <div key={chk.id || index} className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-200 flex items-center space-x-1.5">
+                        {renderCheckIcon(index, scoreData?.file_type)}
+                        <span>{chk.title}</span>
+                      </span>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                        chk.passed !== false ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'
+                      }`}>
+                        {chk.badge || chk.status}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      {chk.recommendation}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <>
+                  {/* Fallback Display */}
+                  <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-200 flex items-center space-x-1.5">
+                        <ScanText className="w-3.5 h-3.5 text-indigo-400" />
+                        <span>Accessibility Check 1: OCR Detection</span>
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">
+                        {scoreData?.ocr_check?.status || 'Selectable'}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      {scoreData?.ocr_check?.recommendation || 'Detect whether text is selectable. If image-only: Display OCR Require Recommendation.'}
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-200 flex items-center space-x-1.5">
+                        <Heading className="w-3.5 h-3.5 text-pink-400" />
+                        <span>Accessibility Check 2: Heading Structure</span>
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">
+                        H1 → H2 → H3
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      {scoreData?.heading_check?.recommendation || 'Checks: Missing Heading 1, Skipped heading levels, Improper heading hierarchy.'}
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-200 flex items-center space-x-1.5">
+                        <FileSearch className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>Accessibility Check 3: Language Detection</span>
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300">
+                        {scoreData?.language_check?.detected_language || 'English'} ({scoreData?.language_check?.confidence || '98%'})
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      {scoreData?.language_check?.recommendation || 'Detected Language: English | Confidence: 98%. Recommend translation if necessary.'}
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-200 flex items-center space-x-1.5">
+                        <Type className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Accessibility Check 4: Font Accessibility</span>
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300">
+                        Min 14px / OpenDyslexic
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      {scoreData?.font_check?.recommendation || 'Minimum font size (14px/16px), Accessible font families (OpenDyslexic, Inter, Arial, Roboto).'}
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
