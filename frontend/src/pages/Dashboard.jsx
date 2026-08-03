@@ -63,30 +63,11 @@ const Dashboard = () => {
             </p>
           </div>
 
-          {/* Accessibility Score Gauge Widget */}
-          <div className="flex items-center space-x-6 bg-slate-900/80 p-4 rounded-2xl border border-slate-800 shrink-0">
-            <div className="text-center">
-              <span className="text-3xl font-black text-emerald-400">{stats?.accessibility_score || 92}%</span>
-              <span className="block text-[11px] text-slate-400 font-medium">Accessibility Index</span>
-            </div>
-            <div className="h-10 w-px bg-slate-800" />
-            <div className="text-center">
-              <span className="text-xl font-bold text-indigo-400">{stats?.preferred_language || 'English'}</span>
-              <span className="block text-[11px] text-slate-400 font-medium">Target Language</span>
-            </div>
-          </div>
+
         </div>
 
-        {/* Learning Progress Bar */}
-        <div className="mt-8 pt-6 border-t border-slate-800/80 space-y-2">
-          <div className="flex items-center justify-between text-xs font-semibold">
-            <span className="text-slate-300">Today's Learning Progress</span>
-            <span className="text-indigo-400">{stats?.today_progress || 78}% Completed</span>
-          </div>
-          <div className="w-full h-3 bg-slate-900 rounded-full overflow-hidden p-0.5 border border-slate-800">
-            <div className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full transition-all duration-500" style={{ width: `${stats?.today_progress || 78}%` }} />
-          </div>
-        </div>
+
+
       </div>
 
       {/* Quick Action Hub */}
@@ -195,14 +176,15 @@ const Dashboard = () => {
 
           <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
             <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-              <span className="text-xs text-slate-400 font-medium block">Total Hours</span>
-              <span className="text-lg font-black text-white">{stats?.hours_learned || 14.5} hrs</span>
+              <span className="text-xs text-slate-400 font-medium block">Documents Uploaded</span>
+              <span className="text-lg font-black text-indigo-400">{stats?.documents_uploaded || recentDocs.length}</span>
             </div>
             <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
               <span className="text-xs text-slate-400 font-medium block">Quizzes Done</span>
-              <span className="text-lg font-black text-emerald-400">{stats?.quizzes_created || 12}</span>
+              <span className="text-lg font-black text-emerald-400">{stats?.quizzes_created || 0}</span>
             </div>
           </div>
+
         </div>
 
       </div>

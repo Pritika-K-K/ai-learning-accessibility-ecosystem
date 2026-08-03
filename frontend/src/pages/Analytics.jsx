@@ -34,13 +34,13 @@ const Analytics = () => {
       </div>
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: 'Total Learning Hours', val: `${data?.learning_hours || 18.5} hrs`, icon: Clock, color: 'text-indigo-400' },
-          { label: 'Documents Processed', val: data?.documents_processed || 12, icon: BookOpen, color: 'text-purple-400' },
+          { label: 'Documents Processed', val: data?.documents_processed || 12, icon: BookOpen, color: 'text-indigo-400' },
           { label: 'Quizzes Completed', val: data?.quizzes_completed || 8, icon: Award, color: 'text-pink-400' },
           { label: 'Accessibility Score Trend', val: data?.accessibility_improvement || '+24%', icon: TrendingUp, color: 'text-emerald-400' },
         ].map((m, i) => {
+
           const Icon = m.icon;
           return (
             <div key={i} className="glass-panel rounded-2xl p-5 border border-slate-800 space-y-2">
@@ -61,8 +61,9 @@ const Analytics = () => {
         <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4">
           <h3 className="text-base font-bold text-white flex items-center space-x-2">
             <TrendingUp className="w-4 h-4 text-indigo-400" />
-            <span>Weekly Study Hours & Score Trend</span>
+            <span>Weekly Activity & Score Trend</span>
           </h3>
+
 
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
